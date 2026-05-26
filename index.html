@@ -15,17 +15,18 @@
     }
 
     :root {
+      --bg-green: #f0f7f0;
       --bg-white: #ffffff;
-      --bg-light: #fafafa;
-      --text-primary: #2a2a2a;
-      --text-secondary: #6b6b6b;
-      --accent-soft: #e8e8e8;
-      --shadow-soft: rgba(0, 0, 0, 0.04);
+      --text-primary: #2d4a2d;
+      --text-secondary: #5a7a5a;
+      --accent-green: #7cb87c;
+      --glow-green: rgba(124, 184, 124, 0.15);
+      --shadow-soft: rgba(45, 74, 45, 0.08);
     }
 
     body {
       font-family: 'Newsreader', 'Noto Serif SC', serif;
-      background: var(--bg-white);
+      background: linear-gradient(180deg, var(--bg-green) 0%, var(--bg-white) 100%);
       color: var(--text-primary);
       line-height: 1.6;
       overflow-x: hidden;
@@ -40,9 +41,9 @@
       width: 100%;
       height: 100%;
       background-image:
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.008) 2px, rgba(0,0,0,.008) 4px),
-        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.008) 2px, rgba(0,0,0,.008) 4px);
-      opacity: 0.5;
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(124, 184, 124, .015) 2px, rgba(124, 184, 124, .015) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(124, 184, 124, .015) 2px, rgba(124, 184, 124, .015) 4px);
+      opacity: 0.6;
       pointer-events: none;
       z-index: 9999;
     }
@@ -53,14 +54,14 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
       padding: 20px 48px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       z-index: 100;
-      border-bottom: 1px solid var(--accent-soft);
+      border-bottom: 1px solid rgba(124, 184, 124, 0.2);
     }
 
     .logo {
@@ -82,10 +83,26 @@
       font-size: 14px;
       letter-spacing: 0.05em;
       transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent-green);
+      transition: width 0.3s ease;
     }
 
     .nav-links a:hover {
-      color: var(--text-primary);
+      color: var(--accent-green);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
     }
 
     /* Hero 区域 */
@@ -96,7 +113,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      background: var(--bg-white);
+      position: relative;
     }
 
     .hero h1 {
@@ -123,15 +140,41 @@
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 24px;
+      gap: 28px;
     }
 
     .photo-card {
       position: relative;
       aspect-ratio: 3/4;
       overflow: hidden;
-      background: var(--bg-light);
+      background: var(--bg-white);
       cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.4s ease;
+      box-shadow: 0 2px 8px var(--shadow-soft);
+    }
+
+    .photo-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: var(--accent-green);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+      border-radius: 4px;
+    }
+
+    .photo-card:hover::before {
+      opacity: 0.3;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px var(--glow-green), 0 0 0 2px var(--accent-green);
     }
 
     .photo-card img {
@@ -142,7 +185,7 @@
     }
 
     .photo-card:hover img {
-      transform: scale(1.03);
+      transform: scale(1.05);
     }
 
     .photo-overlay {
@@ -177,7 +220,8 @@
     /* 关于我 */
     .about {
       padding: 100px 48px;
-      background: var(--bg-light);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
       text-align: center;
     }
 
@@ -225,12 +269,14 @@
       letter-spacing: 0.05em;
       transition: all 0.3s ease;
       padding: 10px 20px;
-      border: 1px solid var(--accent-soft);
+      border: 1px solid rgba(124, 184, 124, 0.3);
+      border-radius: 2px;
     }
 
     .contact-link:hover {
-      color: var(--text-primary);
-      border-color: var(--text-primary);
+      color: var(--accent-green);
+      border-color: var(--accent-green);
+      background: var(--glow-green);
     }
 
     /* Footer */
@@ -240,7 +286,7 @@
       font-size: 12px;
       color: var(--text-secondary);
       letter-spacing: 0.1em;
-      border-top: 1px solid var(--accent-soft);
+      border-top: 1px solid rgba(124, 184, 124, 0.2);
     }
 
     @media (max-width: 768px) {
