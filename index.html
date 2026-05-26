@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>秋秋啾 · 旅拍摄影</title>
+  <meta name="description" content="秋秋啾 · 胶片旅拍摄影师，用理光相机记录旅途中的温柔时光。">
+  <meta property="og:title" content="秋秋啾 · 旅拍摄影">
+  <meta property="og:description" content="胶片旅拍摄影师，追求胶片独有的不准确性。">
+  <meta property="og:image" content="https://qiuqiujiu-photography.vercel.app/assets/photos/photo7.webp">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;1,300&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
@@ -22,6 +28,7 @@
       --accent-green: #7cb87c;
       --glow-green: rgba(124, 184, 124, 0.15);
       --shadow-soft: rgba(45, 74, 45, 0.08);
+      --border-subtle: rgba(124, 184, 124, 0.2);
     }
 
     body {
@@ -32,7 +39,6 @@
       overflow-x: hidden;
     }
 
-    /* 轻微胶片颗粒 */
     body::before {
       content: '';
       position: fixed;
@@ -45,7 +51,7 @@
         repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(124, 184, 124, .015) 2px, rgba(124, 184, 124, .015) 4px);
       opacity: 0.6;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 1;
     }
 
     /* 导航栏 */
@@ -60,8 +66,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 100;
-      border-bottom: 1px solid rgba(124, 184, 124, 0.2);
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .logo {
@@ -105,6 +111,24 @@
       width: 100%;
     }
 
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
     /* Hero 区域 */
     .hero {
       height: 100vh;
@@ -114,6 +138,12 @@
       align-items: center;
       text-align: center;
       position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
     }
 
     .hero h1 {
@@ -130,7 +160,53 @@
       letter-spacing: 0.08em;
     }
 
-    /* 作品网格 */
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--text-secondary);
+      letter-spacing: 0.1em;
+      opacity: 0.6;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-6px); }
+    }
+
+    /* 分类标签 */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 20px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--accent-green);
+      color: #fff;
+      border-color: var(--accent-green);
+    }
+
+    /* 瀑布流画廊 */
     .gallery {
       padding: 80px 32px;
       max-width: 1400px;
@@ -138,54 +214,62 @@
     }
 
     .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 28px;
+      column-count: 3;
+      column-gap: 24px;
     }
 
     .photo-card {
+      break-inside: avoid;
+      margin-bottom: 24px;
       position: relative;
-      aspect-ratio: 3/4;
       overflow: hidden;
-      background: var(--bg-white);
-      cursor: pointer;
       border-radius: 4px;
-      transition: all 0.4s ease;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease;
       box-shadow: 0 2px 8px var(--shadow-soft);
     }
 
-    .photo-card::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: var(--accent-green);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      z-index: -1;
-      border-radius: 4px;
-    }
-
-    .photo-card:hover::before {
-      opacity: 0.3;
+    .photo-card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .photo-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px var(--glow-green), 0 0 0 2px var(--accent-green);
+      box-shadow: 0 12px 32px rgba(45, 74, 45, 0.12);
+    }
+
+    .photo-card.visible:hover {
+      transform: translateY(-4px);
     }
 
     .photo-card img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      display: block;
       transition: transform 0.5s ease;
     }
 
     .photo-card:hover img {
-      transform: scale(1.05);
+      transform: scale(1.03);
+    }
+
+    .photo-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.15) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .photo-card:hover::after {
+      opacity: 1;
     }
 
     .photo-overlay {
@@ -194,7 +278,7 @@
       left: 0;
       right: 0;
       background: linear-gradient(to top, rgba(255, 255, 255, 0.95), transparent);
-      padding: 24px 20px;
+      padding: 32px 16px 16px;
       transform: translateY(100%);
       transition: transform 0.3s ease;
     }
@@ -204,53 +288,174 @@
     }
 
     .photo-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 400;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       letter-spacing: 0.03em;
       color: var(--text-primary);
     }
 
     .photo-location {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 20, 10, 0.95);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 2px;
+      transition: opacity 0.3s ease;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      color: rgba(255,255,255,0.6);
+      font-size: 28px;
+      cursor: pointer;
+      transition: color 0.3s;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .lightbox-close:hover {
+      color: #fff;
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.5);
+      font-size: 36px;
+      cursor: pointer;
+      padding: 16px;
+      transition: color 0.3s;
+      background: none;
+      border: none;
+      user-select: none;
+    }
+
+    .lightbox-nav:hover {
+      color: #fff;
+    }
+
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+
+    .lightbox-caption {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .lightbox-counter {
+      position: absolute;
+      top: 28px;
+      left: 32px;
+      color: rgba(255,255,255,0.4);
+      font-size: 13px;
       letter-spacing: 0.05em;
     }
 
     /* 关于我 */
     .about {
-      padding: 100px 48px;
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(8px);
-      text-align: center;
+      padding: 120px 48px;
+      background: var(--bg-green);
     }
 
-    .about h2 {
+    .about-inner {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .about-image {
+      flex: 0 0 320px;
+      border-radius: 2px;
+      overflow: visible;
+      transform: rotate(-2deg);
+      transition: transform 0.4s ease;
+    }
+
+    .about-image:hover {
+      transform: rotate(0deg);
+    }
+
+    .about-image img {
+      width: 100%;
+      display: block;
+      border-radius: 2px;
+      border: 8px solid #fff;
+      box-shadow: 0 6px 24px var(--shadow-soft);
+    }
+
+    .about-text {
+      flex: 1;
+    }
+
+    .about-text h2 {
       font-size: 40px;
       font-weight: 300;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       letter-spacing: 0.05em;
       color: var(--text-primary);
     }
 
-    .about p {
-      max-width: 680px;
-      margin: 0 auto 20px;
+    .about-text p {
       font-size: 15px;
       color: var(--text-secondary);
-      line-height: 1.8;
+      line-height: 2;
+      margin-bottom: 12px;
     }
 
-    /* 联系方式 */
-    .contact {
-      padding: 100px 48px;
+    /* 联系方式 + Footer 合并 */
+    .footer-contact {
+      padding: 80px 48px 40px;
       text-align: center;
+      border-top: 1px solid var(--border-subtle);
     }
 
-    .contact h2 {
-      font-size: 40px;
+    .footer-contact h2 {
+      font-size: 28px;
       font-weight: 300;
-      margin-bottom: 40px;
+      margin-bottom: 24px;
       letter-spacing: 0.05em;
       color: var(--text-primary);
     }
@@ -260,6 +465,7 @@
       justify-content: center;
       gap: 32px;
       flex-wrap: wrap;
+      margin-bottom: 48px;
     }
 
     .contact-link {
@@ -279,14 +485,18 @@
       background: var(--glow-green);
     }
 
-    /* Footer */
-    footer {
-      padding: 40px;
-      text-align: center;
+    .footer-copy {
       font-size: 12px;
       color: var(--text-secondary);
       letter-spacing: 0.1em;
-      border-top: 1px solid rgba(124, 184, 124, 0.2);
+      opacity: 0.7;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .gallery-grid {
+        column-count: 2;
+      }
     }
 
     @media (max-width: 768px) {
@@ -295,7 +505,30 @@
       }
 
       .nav-links {
-        gap: 24px;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 260px;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 80px 32px 32px;
+        gap: 28px;
+        transition: right 0.3s ease;
+        box-shadow: -4px 0 24px var(--shadow-soft);
+      }
+
+      .nav-links.open {
+        right: 0;
+      }
+
+      .nav-overlay {
+        display: block;
+      }
+
+      .hamburger {
+        display: flex;
       }
 
       .hero h1 {
@@ -303,16 +536,69 @@
       }
 
       .gallery {
-        padding: 60px 20px;
+        padding: 60px 16px;
       }
 
       .gallery-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        column-count: 2;
+        column-gap: 12px;
       }
 
-      .about, .contact {
+      .photo-card {
+        margin-bottom: 12px;
+      }
+
+      .about {
         padding: 60px 24px;
+      }
+
+      .about-inner {
+        flex-direction: column;
+        gap: 32px;
+        text-align: center;
+      }
+
+      .about-image {
+        flex: none;
+        width: 220px;
+        margin: 0 auto;
+        transform: rotate(-1deg);
+      }
+
+      .about-text h2 {
+        font-size: 28px;
+      }
+
+      .footer-contact {
+        padding: 60px 24px 32px;
+      }
+
+      .footer-contact h2 {
+        font-size: 24px;
+      }
+
+      .filter-bar {
+        gap: 8px;
+      }
+
+      .filter-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+      }
+
+      .lightbox-nav {
+        font-size: 28px;
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-grid {
+        column-count: 1;
+      }
+
+      .hero h1 {
+        font-size: 36px;
       }
     }
   </style>
@@ -321,113 +607,286 @@
   <!-- 导航栏 -->
   <nav>
     <div class="logo">秋秋啾</div>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="#gallery">作品集</a></li>
       <li><a href="#about">关于我</a></li>
       <li><a href="#contact">联系方式</a></li>
     </ul>
+    <button class="hamburger" id="hamburger" aria-label="菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </nav>
 
   <!-- Hero 区域 -->
   <section class="hero">
-    <h1>秋秋啾</h1>
-    <p>Film & Travel</p>
+    <div class="hero-content">
+      <h1>秋秋啾</h1>
+      <p>Film & Travel</p>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <svg width="16" height="24" viewBox="0 0 16 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M8 4 L8 18 M3 14 L8 19 L13 14"/>
+      </svg>
+    </div>
   </section>
 
   <!-- 作品集 -->
   <section id="gallery" class="gallery">
-    <div class="gallery-grid">
-      <!-- 照片卡片 -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="portrait">胶片人像</button>
+      <button class="filter-btn" data-filter="travel">旅拍记录</button>
+      <button class="filter-btn" data-filter="daily">日常</button>
     </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
   </section>
 
   <!-- 关于我 -->
   <section id="about" class="about">
-    <h2>关于我</h2>
-    <p>我是秋秋啾，一名热爱胶片摄影的旅拍摄影师。</p>
-    <p>用理光相机记录旅途中的每一个瞬间，追求胶片独有的「不准确性」——那些颗粒、色偏、暗角，恰恰是时间留下的温度。</p>
-    <p>从济州岛的蓝调海岸，到樱花树下的春日时光，每一张照片都是一段故事。</p>
-  </section>
-
-  <!-- 联系方式 -->
-  <section id="contact" class="contact">
-    <h2>联系方式</h2>
-    <div class="contact-links">
-      <a href="https://www.xiaohongshu.com/user/profile/630f6c570000000012001995" target="_blank" class="contact-link">小红书</a>
-      <a href="mailto:contact@example.com" class="contact-link">邮箱</a>
-      <a href="#" class="contact-link">Instagram</a>
+    <div class="about-inner">
+      <div class="about-image">
+        <img src="assets/photos/photo1.webp" alt="秋秋啾">
+      </div>
+      <div class="about-text">
+        <h2>关于我</h2>
+        <p>我是秋秋啾，一名热爱胶片摄影的旅拍摄影师。</p>
+        <p>用理光相机记录旅途中的每一个瞬间，追求胶片独有的「不准确性」——那些颗粒、色偏、暗角，恰恰是时间留下的温度。</p>
+        <p>从济州岛的蓝调海岸，到樱花树下的春日时光，每一张照片都是一段故事。</p>
+      </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    © 2026 秋秋啾 · Film Photography
+  <!-- 联系方式 + Footer -->
+  <footer id="contact" class="footer-contact">
+    <h2>联系方式</h2>
+    <div class="contact-links">
+      <a href="https://www.xiaohongshu.com/user/profile/630f6c570000000012001995" target="_blank" rel="noopener" class="contact-link">小红书</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 秋秋啾 &middot; Film Photography</div>
   </footer>
 
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="照片查看器">
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+    <button class="lightbox-close" id="lightboxClose" aria-label="关闭">&times;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="上一张">&lsaquo;</button>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="下一张">&rsaquo;</button>
+    <img src="" alt="" id="lightboxImg">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+
   <script>
-    // 作品数据（使用秋秋的真实照片）
     const photos = [
       {
         url: 'assets/photos/photo1.webp',
         title: '我的照片好适合做头像哦',
-        location: '胶片头像'
+        location: '胶片头像',
+        category: 'portrait'
       },
       {
         url: 'assets/photos/photo2.webp',
         title: '存一些番茄拍照姿势',
-        location: '旅拍记录'
+        location: '旅拍记录',
+        category: 'travel'
       },
       {
         url: 'assets/photos/photo3.webp',
         title: '理光持续发力中',
-        location: '胶片日常'
+        location: '胶片日常',
+        category: 'daily'
       },
       {
         url: 'assets/photos/photo4.webp',
         title: '18张图记录杭州',
-        location: '杭州 · 喜木人的天堂'
+        location: '杭州',
+        category: 'travel'
       },
       {
         url: 'assets/photos/photo5.webp',
         title: '迷恋胶卷的"不准确性"',
-        location: '胶片质感'
+        location: '胶片质感',
+        category: 'portrait'
       },
       {
         url: 'assets/photos/photo6.webp',
         title: 'Udo Island',
-        location: '济州岛 · 牛岛'
+        location: '济州岛 · 牛岛',
+        category: 'travel'
       },
       {
         url: 'assets/photos/photo7.webp',
         title: '阳光下',
-        location: '自然光人像'
+        location: '自然光人像',
+        category: 'portrait'
       },
       {
         url: 'assets/photos/photo8.webp',
         title: '吃漂亮饭的一天',
-        location: '日常记录'
+        location: '日常记录',
+        category: 'daily'
       },
       {
         url: 'assets/photos/photo9.webp',
         title: '春天的故事',
-        location: '春日时光'
+        location: '春日时光',
+        category: 'travel'
       }
     ];
 
-    // 动态加载照片
-    const galleryGrid = document.querySelector('.gallery-grid');
+    let currentFilter = 'all';
+    let currentIndex = 0;
+    let filteredPhotos = [...photos];
 
-    photos.forEach(photo => {
-      const card = document.createElement('div');
-      card.className = 'photo-card';
-      card.innerHTML = `
-        <img src="${photo.url}" alt="${photo.title}" loading="lazy">
-        <div class="photo-overlay">
-          <div class="photo-title">${photo.title}</div>
-          <div class="photo-location">${photo.location}</div>
-        </div>
-      `;
-      galleryGrid.appendChild(card);
+    function renderGallery(filter) {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+      filteredPhotos = filter === 'all' ? [...photos] : photos.filter(p => p.category === filter);
+
+      filteredPhotos.forEach((photo, index) => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        card.innerHTML = `
+          <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+          <div class="photo-overlay">
+            <div class="photo-title">${photo.title}</div>
+            <div class="photo-location">${photo.location}</div>
+          </div>
+        `;
+        card.addEventListener('click', () => openLightbox(index));
+        grid.appendChild(card);
+      });
+
+      requestAnimationFrame(() => observeCards());
+    }
+
+    function observeCards() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const cards = Array.from(document.querySelectorAll('.photo-card:not(.visible)'));
+            const idx = cards.indexOf(entry.target);
+            setTimeout(() => entry.target.classList.add('visible'), Math.max(0, idx) * 80);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.05 });
+
+      document.querySelectorAll('.photo-card').forEach(card => observer.observe(card));
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderGallery(currentFilter);
+      });
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxCounter = document.getElementById('lightboxCounter');
+
+    function openLightbox(index) {
+      currentIndex = index;
+      updateLightbox();
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      preloadAdjacent();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function updateLightbox() {
+      const photo = filteredPhotos[currentIndex];
+      lightboxImg.src = photo.url;
+      lightboxImg.alt = photo.title;
+      lightboxCaption.textContent = photo.title + ' · ' + photo.location;
+      lightboxCounter.textContent = (currentIndex + 1) + ' / ' + filteredPhotos.length;
+    }
+
+    function preloadAdjacent() {
+      const prev = (currentIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+      const next = (currentIndex + 1) % filteredPhotos.length;
+      new Image().src = filteredPhotos[prev].url;
+      new Image().src = filteredPhotos[next].url;
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+
+    document.getElementById('lightboxPrev').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+      updateLightbox();
+      preloadAdjacent();
+    });
+
+    document.getElementById('lightboxNext').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % filteredPhotos.length;
+      updateLightbox();
+      preloadAdjacent();
+    });
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') {
+        currentIndex = (currentIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+        updateLightbox();
+        preloadAdjacent();
+      }
+      if (e.key === 'ArrowRight') {
+        currentIndex = (currentIndex + 1) % filteredPhotos.length;
+        updateLightbox();
+        preloadAdjacent();
+      }
+    });
+
+    // 触摸滑动支持
+    let touchStartX = 0;
+    lightbox.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          currentIndex = (currentIndex - 1 + filteredPhotos.length) % filteredPhotos.length;
+        } else {
+          currentIndex = (currentIndex + 1) % filteredPhotos.length;
+        }
+        updateLightbox();
+        preloadAdjacent();
+      }
+    }, { passive: true });
+
+    // 汉堡菜单
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+        navLinks.classList.remove('open');
+      }
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
     });
 
     // 平滑滚动
@@ -436,13 +895,26 @@
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     });
+
+    // 导航栏滚动隐藏/显示
+    let lastScroll = 0;
+    const navEl = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      const current = window.scrollY;
+      if (current > lastScroll && current > 100) {
+        navEl.style.transform = 'translateY(-100%)';
+      } else {
+        navEl.style.transform = 'translateY(0)';
+      }
+      lastScroll = current;
+    }, { passive: true });
+    navEl.style.transition = 'transform 0.3s ease, background 0.3s ease';
+
+    renderGallery('all');
   </script>
 </body>
 </html>
