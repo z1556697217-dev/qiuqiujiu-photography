@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>秋秋啾 · 旅拍摄影</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;1,300&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-white: #ffffff;
+      --bg-light: #fafafa;
+      --text-primary: #2a2a2a;
+      --text-secondary: #6b6b6b;
+      --accent-soft: #e8e8e8;
+      --shadow-soft: rgba(0, 0, 0, 0.04);
+    }
+
+    body {
+      font-family: 'Newsreader', 'Noto Serif SC', serif;
+      background: var(--bg-white);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 轻微胶片颗粒 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.008) 2px, rgba(0,0,0,.008) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.008) 2px, rgba(0,0,0,.008) 4px);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* 导航栏 */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 20px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      border-bottom: 1px solid var(--accent-soft);
+    }
+
+    .logo {
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Hero 区域 */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: var(--bg-white);
+    }
+
+    .hero h1 {
+      font-size: 64px;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+    }
+
+    /* 作品网格 */
+    .gallery {
+      padding: 80px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .photo-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: var(--bg-light);
+      cursor: pointer;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.03);
+    }
+
+    .photo-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), transparent);
+      padding: 24px 20px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .photo-card:hover .photo-overlay {
+      transform: translateY(0);
+    }
+
+    .photo-title {
+      font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+      color: var(--text-primary);
+    }
+
+    .photo-location {
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    /* 关于我 */
+    .about {
+      padding: 100px 48px;
+      background: var(--bg-light);
+      text-align: center;
+    }
+
+    .about h2 {
+      font-size: 40px;
+      font-weight: 300;
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .about p {
+      max-width: 680px;
+      margin: 0 auto 20px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    /* 联系方式 */
+    .contact {
+      padding: 100px 48px;
+      text-align: center;
+    }
+
+    .contact h2 {
+      font-size: 40px;
+      font-weight: 300;
+      margin-bottom: 40px;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      padding: 10px 20px;
+      border: 1px solid var(--accent-soft);
+    }
+
+    .contact-link:hover {
+      color: var(--text-primary);
+      border-color: var(--text-primary);
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      letter-spacing: 0.1em;
+      border-top: 1px solid var(--accent-soft);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 16px 24px;
+      }
+
+      .nav-links {
+        gap: 24px;
+      }
+
+      .hero h1 {
+        font-size: 42px;
+      }
+
+      .gallery {
+        padding: 60px 20px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .about, .contact {
+        padding: 60px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav>
+    <div class="logo">秋秋啾</div>
+    <ul class="nav-links">
+      <li><a href="#gallery">作品集</a></li>
+      <li><a href="#about">关于我</a></li>
+      <li><a href="#contact">联系方式</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero 区域 -->
+  <section class="hero">
+    <h1>秋秋啾</h1>
+    <p>Film & Travel</p>
+  </section>
+
+  <!-- 作品集 -->
+  <section id="gallery" class="gallery">
+    <div class="gallery-grid">
+      <!-- 照片卡片 -->
+    </div>
+  </section>
+
+  <!-- 关于我 -->
+  <section id="about" class="about">
+    <h2>关于我</h2>
+    <p>我是秋秋啾，一名热爱胶片摄影的旅拍摄影师。</p>
+    <p>用理光相机记录旅途中的每一个瞬间，追求胶片独有的「不准确性」——那些颗粒、色偏、暗角，恰恰是时间留下的温度。</p>
+    <p>从济州岛的蓝调海岸，到樱花树下的春日时光，每一张照片都是一段故事。</p>
+  </section>
+
+  <!-- 联系方式 -->
+  <section id="contact" class="contact">
+    <h2>联系方式</h2>
+    <div class="contact-links">
+      <a href="https://www.xiaohongshu.com/user/profile/630f6c570000000012001995" target="_blank" class="contact-link">小红书</a>
+      <a href="mailto:contact@example.com" class="contact-link">邮箱</a>
+      <a href="#" class="contact-link">Instagram</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2026 秋秋啾 · Film Photography
+  </footer>
+
+  <script>
+    // 作品数据（使用秋秋的真实照片）
+    const photos = [
+      {
+        url: 'assets/photos/photo1.webp',
+        title: '我的照片好适合做头像哦',
+        location: '胶片头像'
+      },
+      {
+        url: 'assets/photos/photo2.webp',
+        title: '存一些番茄拍照姿势',
+        location: '旅拍记录'
+      },
+      {
+        url: 'assets/photos/photo3.webp',
+        title: '理光持续发力中',
+        location: '胶片日常'
+      },
+      {
+        url: 'assets/photos/photo4.webp',
+        title: '18张图记录杭州',
+        location: '杭州 · 喜木人的天堂'
+      },
+      {
+        url: 'assets/photos/photo5.webp',
+        title: '迷恋胶卷的"不准确性"',
+        location: '胶片质感'
+      },
+      {
+        url: 'assets/photos/photo6.webp',
+        title: 'Udo Island',
+        location: '济州岛 · 牛岛'
+      },
+      {
+        url: 'assets/photos/photo7.webp',
+        title: '阳光下',
+        location: '自然光人像'
+      },
+      {
+        url: 'assets/photos/photo8.webp',
+        title: '吃漂亮饭的一天',
+        location: '日常记录'
+      },
+      {
+        url: 'assets/photos/photo9.webp',
+        title: '春天的故事',
+        location: '春日时光'
+      }
+    ];
+
+    // 动态加载照片
+    const galleryGrid = document.querySelector('.gallery-grid');
+
+    photos.forEach(photo => {
+      const card = document.createElement('div');
+      card.className = 'photo-card';
+      card.innerHTML = `
+        <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+        <div class="photo-overlay">
+          <div class="photo-title">${photo.title}</div>
+          <div class="photo-location">${photo.location}</div>
+        </div>
+      `;
+      galleryGrid.appendChild(card);
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
